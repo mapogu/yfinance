@@ -281,7 +281,11 @@ class TickerBase():
 
         # holders
         url = "{}/{}/holders".format(self._scrape_url, self.ticker)
-        holders = _pd.read_html(url)
+        try:
+            holders = _pd.read_html(url)
+        except:
+            holders = []
+            
 
         self._major_holders = _pd.DataFrame()
         self._institutional_holders = _pd.DataFrame()
