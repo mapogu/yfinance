@@ -301,20 +301,23 @@ class TickerBase():
                 '% Out'].str.replace('%', '').astype(float)/100
 
         # sustainability
-        d = {}
-        if isinstance(data.get('esgScores'), dict):
-            for item in data['esgScores']:
-                if not isinstance(data['esgScores'][item], (dict, list)):
-                    d[item] = data['esgScores'][item]
+        try:
+            d = {}
+            if isinstance(data.get('esgScores'), dict):
+                for item in data['esgScores']:
+                    if not isinstance(data['esgScores'][item], (dict, list)):
+                        d[item] = data['esgScores'][item]
 
-            s = _pd.DataFrame(index=[0], data=d)[-1:].T
-            s.columns = ['Value']
-            s.index.name = '%.f-%.f' % (
-                s[s.index == 'ratingYear']['Value'].values[0],
-                s[s.index == 'ratingMonth']['Value'].values[0])
+                s = _pd.DataFrame(index=[0], data=d)[-1:].T
+                s.columns = ['Value']
+                s.index.name = '%.f-%.f' % (
+                    s[s.index == 'ratingYear']['Value'].values[0],
+                    s[s.index == 'ratingMonth']['Value'].values[0])
 
-            self._sustainability = s[~s.index.isin(
-                ['maxAge', 'ratingYear', 'ratingMonth'])]
+                self._sustainability = s[~s.index.isin(
+                    ['maxAge', 'ratingYear', 'ratingMonth'])]
+        except:
+            pass
 
         # info (be nice to python 2)
         self._info = {}
@@ -328,7 +331,7 @@ class TickerBase():
             self._info['regularMarketPrice'] = self._info['regularMarketOpen']
         except:
             self._info['regularMarketPrice'] = 0
-            
+
         self._info['logo_url'] = ""
         try:
             domain = self._info['website'].split(
